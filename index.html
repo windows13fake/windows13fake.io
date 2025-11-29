@@ -1,131 +1,140 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>Le Cloud a lisa</title>
-<style>
-    body {
-        margin: 0;
-        font-family: Arial;
-        background: #111 url('https://i.ibb.co/HpkG0gW/maman.png') center/cover no-repeat;
-        color: white;
-    }
-    #lockscreen, #cloud {
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        backdrop-filter: blur(10px);
-    }
-    #cloud { display: none; }
-    .card {
-        background: rgba(0,0,0,0.7);
-        padding: 20px;
-        border-radius: 15px;
-        width: 350px;
-        text-align: center;
-        border: 2px solid #0ff;
-        box-shadow: 0 0 20px #0ff;
-    }
-    input[type=password], input[type=file] {
-        width: 90%;
-        padding: 10px;
-        margin: 10px;
-        border-radius: 10px;
-        border: none;
-    }
-    button {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 10px;
-        background: #0ff;
-        cursor: pointer;
-        font-weight: bold;
-    }
-    #fileList { margin-top: 20px; }
-    .fileItem {
-        background: rgba(255,255,255,0.1);
-        padding: 8px;
-        margin: 5px 0;
-        border-radius: 8px;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Cloud Perso</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://via.placeholder.com/1920x1080/ff69b4/ffffff?text=maman+je+taime');
+            background-size: cover;
+            background-attachment: fixed;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            height: 100vh;
+        }
+        #login {
+            margin-top: 200px;
+        }
+        #fileArea {
+            display: none;
+            margin-top: 50px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            background-color: #ff69b4;
+            color: white;
+            cursor: pointer;
+        }
+        #fileList {
+            margin-top: 20px;
+            text-align: left;
+            display: inline-block;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+        }
+        .file-item {
+            padding: 10px;
+            border-bottom: 1px solid #ff69b4;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
 </head>
 <body>
-
-<div id="lockscreen">
-    <div class="card">
-        <h2>Cloud sécurisé</h2>
-        <p>Entrez le code :</p>
-        <input id="pass" type="password" placeholder="••••••">
-        <button onclick="unlock()">Déverrouiller</button>
-        <p style="margin-top:15px; font-size:14px;">Mot de passe : 160902</p>
+    <div id="login">
+        <h1>Mon Cloud Perso</h1>
+        <input type="password" id="password" placeholder="Code d'accès (160902)">
+        <button onclick="checkPassword()">Accéder</button>
     </div>
-</div>
 
-<div id="cloud">
-    <div class="card" style="width:450px;">
-        <h2>Mon Cloud</h2>
-        <input id="fileInput" type="file" multiple>
-        <button onclick="uploadFiles()">Importer</button>
+    <div id="fileArea">
+        <h2>Mes Fichiers</h2>
+        <input type="file" id="fileUpload" multiple>
+        <button onclick="uploadFile()">Uploader</button>
         <div id="fileList"></div>
     </div>
-</div>
 
-<script>
-const PASSWORD = "160902";
+    <script>
+        const correctPassword = "160902";
 
-// Chargement des fichiers sauvegardés
-let savedFiles = JSON.parse(localStorage.getItem("cloudFiles") || "{}");
+        function checkPassword() {
+            const password = document.getElementById("password").value;
+            if (password === correctPassword) {
+                document.getElementById("login").style.display = "none";
+                document.getElementById("fileArea").style.display = "block";
+                loadFiles();
+            } else {
+                alert("Code incorrect !");
+            }
+        }
 
-function unlock() {
-    let p = document.getElementById("pass").value;
-    if (p === PASSWORD) {
-        document.getElementById("lockscreen").style.display = "none";
-        document.getElementById("cloud").style.display = "flex";
-        refreshList();
-    }
-}
+        function uploadFile() {
+            const files = document.getElementById("fileUpload").files;
+            if (files.length === 0) return;
 
-function uploadFiles() {
-    let files = document.getElementById("fileInput").files;
+            // Simulation de stockage en localStorage (remplace par un vrai serveur pour un vrai cloud)
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const fileData = {
+                        name: file.name,
+                        size: file.size,
+                        type: file.type,
+                        data: e.target.result
+                    };
+                    let storedFiles = JSON.parse(localStorage.getItem('cloudFiles') || '[]');
+                    storedFiles.push(fileData);
+                    localStorage.setItem('cloudFiles', JSON.stringify(storedFiles));
+                    loadFiles();
+                };
+                reader.readAsDataURL(file);
+            }
+            alert("Fichiers uploadés (simulé en local) !");
+        }
 
-    [...files].forEach(file => {
-        let reader = new FileReader();
-        reader.onload = function(e) {
-            savedFiles[file.name] = e.target.result;
-            localStorage.setItem("cloudFiles", JSON.stringify(savedFiles));
-            refreshList();
-        };
-        reader.readAsDataURL(file);
-    });
-}
+        function loadFiles() {
+            const storedFiles = JSON.parse(localStorage.getItem('cloudFiles') || '[]');
+            const fileList = document.getElementById("fileList");
+            fileList.innerHTML = "";
 
-function downloadFile(name, data) {
-    let a = document.createElement("a");
-    a.href = data;
-    a.download = name;
-    a.click();
-}
+            if (storedFiles.length === 0) {
+                fileList.innerHTML = "<p>Aucun fichier pour l'instant.</p>";
+                return;
+            }
 
-// Affiche la liste
-function refreshList() {
-    let list = document.getElementById("fileList");
-    list.innerHTML = "";
+            storedFiles.forEach((file, index) => {
+                const fileItem = document.createElement("div");
+                fileItem.className = "file-item";
+                fileItem.innerHTML = `
+                    <span>${file.name} (${(file.size / 1024).toFixed(2)} Ko)</span>
+                    <button onclick="downloadFile(${index})">Télécharger</button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
 
-    for (let name in savedFiles) {
-        let div = document.createElement("div");
-        div.className = "fileItem";
-        div.innerHTML = `
-            ${name}  
-            <button onclick="downloadFile('${name}', savedFiles['${name}'])">Télécharger</button>
-        `;
-        list.appendChild(div);
-    }
-}
-</script>
-
+        function downloadFile(index) {
+            const storedFiles = JSON.parse(localStorage.getItem('cloudFiles') || '[]');
+            const file = storedFiles[index];
+            const link = document.createElement("a");
+            link.href = file.data;
+            link.download = file.name;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
 </body>
 </html>
