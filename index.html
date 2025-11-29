@@ -1,140 +1,114 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Cloud Perso</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://via.placeholder.com/1920x1080/ff69b4/ffffff?text=maman+je+taime');
-            background-size: cover;
-            background-attachment: fixed;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin: 0;
-            height: 100vh;
-        }
-        #login {
-            margin-top: 200px;
-        }
-        #fileArea {
-            display: none;
-            margin-top: 50px;
-        }
-        input, button {
-            padding: 10px;
-            margin: 10px;
-            border-radius: 5px;
-            border: none;
-        }
-        button {
-            background-color: #ff69b4;
-            color: white;
-            cursor: pointer;
-        }
-        #fileList {
-            margin-top: 20px;
-            text-align: left;
-            display: inline-block;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 20px;
-            border-radius: 10px;
-            width: 80%;
-        }
-        .file-item {
-            padding: 10px;
-            border-bottom: 1px solid #ff69b4;
-            display: flex;
-            justify-content: space-between;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mon Cloud Personnel</title>
+<style>
+  body {
+    background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.1&auto=format&fit=crop&w=1950&q=80');
+    background-size: cover;
+    font-family: Arial, sans-serif;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    padding: 20px;
+  }
+  h1 {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+  }
+  #fileList {
+    width: 80%;
+    max-height: 300px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    margin-top: 20px;
+  }
+  input[type="text"], input[type="file"] {
+    margin: 10px;
+  }
+  button {
+    padding: 10px 20px;
+    margin-top: 10px;
+  }
+</style>
 </head>
 <body>
-    <div id="login">
-        <h1>Mon Cloud Perso</h1>
-        <input type="password" id="password" placeholder="Code d'accès (160902)">
-        <button onclick="checkPassword()">Accéder</button>
-    </div>
 
-    <div id="fileArea">
-        <h2>Mes Fichiers</h2>
-        <input type="file" id="fileUpload" multiple>
-        <button onclick="uploadFile()">Uploader</button>
-        <div id="fileList"></div>
-    </div>
+<h1>Mon Cloud Personnel</h1>
 
-    <script>
-        const correctPassword = "160902";
+<div id="messages">
+  <p>160902</p>
+  <p>Maman je t’aime</p>
+</div>
 
-        function checkPassword() {
-            const password = document.getElementById("password").value;
-            if (password === correctPassword) {
-                document.getElementById("login").style.display = "none";
-                document.getElementById("fileArea").style.display = "block";
-                loadFiles();
-            } else {
-                alert("Code incorrect !");
-            }
-        }
+<form id="uploadForm">
+  <input type="text" id="fileName" placeholder="Nom du fichier" />
+  <input type="file" id="fileInput" />
+  <button type="submit">Ajouter au Cloud</button>
+</form>
 
-        function uploadFile() {
-            const files = document.getElementById("fileUpload").files;
-            if (files.length === 0) return;
+<h2>Fichiers dans le Cloud :</h2>
+<div id="fileList"></div>
 
-            // Simulation de stockage en localStorage (remplace par un vrai serveur pour un vrai cloud)
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const fileData = {
-                        name: file.name,
-                        size: file.size,
-                        type: file.type,
-                        data: e.target.result
-                    };
-                    let storedFiles = JSON.parse(localStorage.getItem('cloudFiles') || '[]');
-                    storedFiles.push(fileData);
-                    localStorage.setItem('cloudFiles', JSON.stringify(storedFiles));
-                    loadFiles();
-                };
-                reader.readAsDataURL(file);
-            }
-            alert("Fichiers uploadés (simulé en local) !");
-        }
+<script>
+  const fileListDiv = document.getElementById('fileList');
 
-        function loadFiles() {
-            const storedFiles = JSON.parse(localStorage.getItem('cloudFiles') || '[]');
-            const fileList = document.getElementById("fileList");
-            fileList.innerHTML = "";
+  document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const fileInput = document.getElementById('fileInput');
+    const fileName = document.getElementById('fileName').value || fileInput.files[0]?.name;
+    if (!fileName || !fileInput.files.length) {
+      alert('Veuillez sélectionner un fichier et donner un nom.');
+      return;
+    }
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const content = e.target.result;
+      const fileData = {
+        name: fileName,
+        content: content,
+        type: file.type
+      };
+      saveFile(fileData);
+      displayFiles();
+    };
+    if (file.type.startsWith('text') || file.type === 'audio/mp3') {
+      reader.readAsDataURL(file);
+    } else {
+      alert('Type de fichier non supporté.');
+    }
+  });
 
-            if (storedFiles.length === 0) {
-                fileList.innerHTML = "<p>Aucun fichier pour l'instant.</p>";
-                return;
-            }
+  function saveFile(fileData) {
+    let files = JSON.parse(localStorage.getItem('myCloudFiles') || '[]');
+    files.push(fileData);
+    localStorage.setItem('myCloudFiles', JSON.stringify(files));
+  }
 
-            storedFiles.forEach((file, index) => {
-                const fileItem = document.createElement("div");
-                fileItem.className = "file-item";
-                fileItem.innerHTML = `
-                    <span>${file.name} (${(file.size / 1024).toFixed(2)} Ko)</span>
-                    <button onclick="downloadFile(${index})">Télécharger</button>
-                `;
-                fileList.appendChild(fileItem);
-            });
-        }
+  function displayFiles() {
+    fileListDiv.innerHTML = '';
+    let files = JSON.parse(localStorage.getItem('myCloudFiles') || '[]');
+    files.forEach((file, index) => {
+      const div = document.createElement('div');
+      div.innerHTML = `
+        <strong>${file.name}</strong><br/>
+        ${file.type.startsWith('text') ? `<pre>${atob(file.content.split(',')[1])}</pre>` : ''}
+        ${file.type === 'audio/mp3' ? `<audio controls src="${file.content}"></audio>` : ''}
+        <hr/>
+      `;
+      fileListDiv.appendChild(div);
+    });
+  }
 
-        function downloadFile(index) {
-            const storedFiles = JSON.parse(localStorage.getItem('cloudFiles') || '[]');
-            const file = storedFiles[index];
-            const link = document.createElement("a");
-            link.href = file.data;
-            link.download = file.name;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    </script>
+  // Charger les fichiers au démarrage
+  displayFiles();
+</script>
+
 </body>
 </html>
