@@ -1,403 +1,131 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Mon Cloud</title>
+<meta charset="UTF-8">
+<title>Le Cloud a lisa</title>
 <style>
-  :root{
-    --bg:#0b1020;
-    --card:#0f1724cc;
-    --accent:#7ce7ff;
-    --muted:#aab3c3;
-    --glass: rgba(255,255,255,0.04);
-  }
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
-  body{background:linear-gradient(180deg,#071029 0%, #0b1020 60%); color:#e6eef8; display:flex; align-items:center; justify-content:center; padding:24px;}
-  .app{width:100%; max-width:1100px; min-height:640px; border-radius:18px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,0.6); position:relative; background:var(--card);}
-  /* background message */
-  .bg-message{
-    position:absolute; inset:0; z-index:0; display:flex; align-items:center; justify-content:center; font-size:48px; font-weight:700;
-    background-image: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.45));
-    color: rgba(255,240,240,0.92); text-shadow: 0 6px 30px rgba(0,0,0,0.6);
-    letter-spacing:1px;
-  }
-  .bg-overlay{
-    position:absolute; inset:0; z-index:0; background-size:cover; background-position:center; filter:blur(0px) grayscale(0.05) saturate(1.05);
-    opacity:0.95;
-  }
-  header{position:relative; z-index:2; padding:18px 22px; display:flex; align-items:center; gap:14px; border-bottom:1px solid rgba(255,255,255,0.03);}
-  header h1{margin:0;font-size:18px;color:var(--accent)}
-  .main{display:flex; gap:18px; padding:22px; position:relative; z-index:2;}
-  .left{width:360px; min-height:420px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:12px; padding:14px; box-sizing:border-box;}
-  .right{flex:1; min-height:420px; background:var(--glass); border-radius:12px; padding:14px; box-sizing:border-box; display:flex; flex-direction:column;}
-  .dropzone{height:120px; border-radius:8px; border:2px dashed rgba(124,231,255,0.15); display:flex; align-items:center; justify-content:center; color:var(--muted); margin-bottom:12px; text-align:center; padding:12px;}
-  .files{max-height:350px; overflow:auto; padding-right:6px;}
-  .file{display:flex; align-items:center; gap:10px; padding:8px; border-radius:8px; margin-bottom:8px; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));}
-  .file img.icon{width:44px;height:44px;object-fit:cover;border-radius:6px; background:#081022}
-  .file .meta{flex:1}
-  .file .meta div{font-size:13px}
-  .file .meta .small{font-size:12px;color:var(--muted)}
-  .controls{display:flex; gap:8px}
-  button {background:transparent;border:1px solid rgba(255,255,255,0.06); color:var(--accent); padding:8px 10px;border-radius:8px; cursor:pointer}
-  button.ghost{border-color:transparent;color:var(--muted)}
-  .viewer{flex:1; border-radius:8px; background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.18)); padding:12px; display:flex; flex-direction:column; gap:8px;}
-  .viewer .title{font-weight:600}
-  textarea{flex:1; resize:vertical; min-height:180px; background:transparent; color:inherit; border:1px solid rgba(255,255,255,0.04); padding:8px; border-radius:6px;}
-  .top-actions{display:flex; gap:8px; align-items:center; margin-left:auto}
-  .small-muted{font-size:12px;color:var(--muted)}
-  .lock-overlay{position:absolute; inset:0; background:linear-gradient(180deg, rgba(2,6,23,0.8), rgba(2,6,23,0.9)); display:flex; align-items:center; justify-content:center; z-index:10; flex-direction:column; gap:12px;}
-  .code-input{display:flex; gap:8px; align-items:center;}
-  input[type="password"]{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06); background:transparent; color:inherit;}
-  .hint{font-size:13px;color:var(--muted)}
-  .empty{display:flex; align-items:center; justify-content:center; height:100%; color:var(--muted); font-size:14px}
-  footer{padding:10px 18px; font-size:12px; color:var(--muted); text-align:right; border-top:1px solid rgba(255,255,255,0.02)}
-  a.link{color:var(--accent); text-decoration:none}
-  /* responsive */
-  @media (max-width:900px){
-    .main{flex-direction:column}
-    .left{width:100%}
-  }
+    body {
+        margin: 0;
+        font-family: Arial;
+        background: #111 url('https://i.ibb.co/HpkG0gW/maman.png') center/cover no-repeat;
+        color: white;
+    }
+    #lockscreen, #cloud {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        backdrop-filter: blur(10px);
+    }
+    #cloud { display: none; }
+    .card {
+        background: rgba(0,0,0,0.7);
+        padding: 20px;
+        border-radius: 15px;
+        width: 350px;
+        text-align: center;
+        border: 2px solid #0ff;
+        box-shadow: 0 0 20px #0ff;
+    }
+    input[type=password], input[type=file] {
+        width: 90%;
+        padding: 10px;
+        margin: 10px;
+        border-radius: 10px;
+        border: none;
+    }
+    button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        background: #0ff;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    #fileList { margin-top: 20px; }
+    .fileItem {
+        background: rgba(255,255,255,0.1);
+        padding: 8px;
+        margin: 5px 0;
+        border-radius: 8px;
+    }
 </style>
 </head>
 <body>
-  <div class="app" id="app">
-    <div class="bg-overlay" id="bgOverlay"></div>
-    <div class="bg-message" id="bgMessage">Bienvenue</div>
 
-    <header>
-      <div style="display:flex;align-items:center;gap:10px">
-        <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M3 12a7 7 0 017-7h1a7 7 0 017 7v1a4 4 0 11-8 0H10a4 4 0 00-7-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <h1>Mon Cloud</h1>
-      </div>
-      <div class="top-actions" style="margin-left:auto; gap:10px;">
-        <div class="small-muted" id="statusCount">0 fichier(s)</div>
-        <button id="btnLock" class="ghost">Verrouiller</button>
-        <button id="btnClear" title="Supprimer tout" class="ghost">Supprimer tout</button>
-      </div>
-    </header>
-
-    <div class="main">
-      <div class="left">
-        <div class="dropzone" id="dropzone">
-          Glisser-déposer des fichiers ici<br><small class="hint">ou clique pour choisir</small>
-        </div>
-        <input id="fileInput" type="file" multiple style="display:none" />
-        <div style="display:flex; gap:8px; margin-bottom:10px;">
-          <button id="newText">Nouveau fichier texte</button>
-          <button id="importBtn" class="ghost">Importer</button>
-        </div>
-
-        <div style="font-size:13px;color:var(--muted); margin-bottom:6px">Fichiers</div>
-        <div class="files" id="filesList">
-          <div class="empty">Aucun fichier — ajoute des fichiers pour commencer</div>
-        </div>
-      </div>
-
-      <div class="right">
-        <div class="viewer" id="viewer">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div class="title" id="viewerTitle">Sélectionne un fichier</div>
-            <div style="margin-left:auto; display:flex; gap:8px;">
-              <button id="btnDownload" class="ghost">Télécharger</button>
-              <button id="btnDelete" class="ghost">Supprimer</button>
-              <button id="btnSave" class="ghost">Enregistrer</button>
-            </div>
-          </div>
-
-          <div id="previewArea" style="flex:1; display:flex; gap:12px; align-items:stretch;">
-            <div id="previewEmpty" class="empty">Aucun aperçu</div>
-          </div>
-        </div>
-      </div>
+<div id="lockscreen">
+    <div class="card">
+        <h2>Cloud sécurisé</h2>
+        <p>Entrez le code :</p>
+        <input id="pass" type="password" placeholder="••••••">
+        <button onclick="unlock()">Déverrouiller</button>
+        <p style="margin-top:15px; font-size:14px;">Mot de passe : 160902</p>
     </div>
+</div>
 
-    <footer>
-      Fichier stockés localement dans ton navigateur • <span class="small-muted">Pour publier : dépose ce fichier sur un repo GitHub et active GitHub Pages (branch main / index.html).</span>
-    </footer>
-
-    <!-- verrou -->
-    <div class="lock-overlay" id="lockOverlay" style="display:flex;">
-      <div style="background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:20px; border-radius:12px; min-width:320px; box-shadow:0 12px 40px rgba(0,0,0,0.6);">
-        <div style="font-size:18px; font-weight:700; margin-bottom:8px">Accès protégé</div>
-        <div class="hint" style="margin-bottom:12px">Entre le code pour accéder au cloud</div>
-        <div class="code-input">
-          <input id="codeInput" type="password" placeholder="Code..." />
-          <button id="btnUnlock">Déverrouiller</button>
-        </div>
-        <div class="hint" style="margin-top:10px">Code attendu : 6 chiffres.</div>
-      </div>
+<div id="cloud">
+    <div class="card" style="width:450px;">
+        <h2>Mon Cloud</h2>
+        <input id="fileInput" type="file" multiple>
+        <button onclick="uploadFiles()">Importer</button>
+        <div id="fileList"></div>
     </div>
-  </div>
+</div>
 
 <script>
-/*
-  Mon Cloud - single-file
-  - Stocke les fichiers dans localStorage sous la clé 'cloud_files'
-  - Requiert le code 160902 pour déverrouiller
-  - Affiche "maman je t'aime" en fond après déverrouillage
-*/
+const PASSWORD = "160902";
 
-const PASSCODE = '160902';
-const STORAGE_KEY = 'cloud_files_v1';
-const UNLOCK_KEY = 'cloud_unlocked_v1';
+// Chargement des fichiers sauvegardés
+let savedFiles = JSON.parse(localStorage.getItem("cloudFiles") || "{}");
 
-const app = document.getElementById('app');
-const lockOverlay = document.getElementById('lockOverlay');
-const codeInput = document.getElementById('codeInput');
-const btnUnlock = document.getElementById('btnUnlock');
-const bgOverlay = document.getElementById('bgOverlay');
-const bgMessage = document.getElementById('bgMessage');
-
-const fileInput = document.getElementById('fileInput');
-const importBtn = document.getElementById('importBtn');
-const dropzone = document.getElementById('dropzone');
-const filesList = document.getElementById('filesList');
-const statusCount = document.getElementById('statusCount');
-
-const viewerTitle = document.getElementById('viewerTitle');
-const previewArea = document.getElementById('previewArea');
-const previewEmpty = document.getElementById('previewEmpty');
-const btnDownload = document.getElementById('btnDownload');
-const btnDelete = document.getElementById('btnDelete');
-const btnSave = document.getElementById('btnSave');
-const btnClear = document.getElementById('btnClear');
-const btnLock = document.getElementById('btnLock');
-const newText = document.getElementById('newText');
-
-let files = []; // {id,name,type,data,created}
-let selectedId = null;
-
-function loadFiles(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    files = raw ? JSON.parse(raw) : [];
-  }catch(e){
-    files = [];
-  }
-}
-function saveFiles(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
-  renderFiles();
-}
-function renderFiles(){
-  filesList.innerHTML = '';
-  if(files.length === 0){
-    const d = document.createElement('div');
-    d.className='empty';
-    d.textContent='Aucun fichier — ajoute des fichiers pour commencer';
-    filesList.appendChild(d);
-    statusCount.textContent = '0 fichier(s)';
-    clearViewer();
-    return;
-  }
-  statusCount.textContent = files.length + ' fichier(s)';
-  files.forEach(f=>{
-    const el = document.createElement('div'); el.className='file';
-    const icon = document.createElement('img'); icon.className='icon';
-    if(f.type && f.type.startsWith('image/')) icon.src = f.data;
-    else icon.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="100%" height="100%" fill="#071322"/><text x="50%" y="55%" fill="#7ce7ff" font-size="22" font-family="sans-serif" text-anchor="middle">${f.name.slice(0,2)}</text></svg>`);
-    el.appendChild(icon);
-    const meta = document.createElement('div'); meta.className='meta';
-    const name = document.createElement('div'); name.textContent = f.name;
-    const small = document.createElement('div'); small.className='small'; small.textContent = `${f.type || 'inconnu'} • ${new Date(f.created).toLocaleString()}`;
-    meta.appendChild(name); meta.appendChild(small);
-    el.appendChild(meta);
-    const controls = document.createElement('div'); controls.className='controls';
-    const openBtn = document.createElement('button'); openBtn.textContent='Ouvrir';
-    openBtn.onclick = ()=> selectFile(f.id);
-    controls.appendChild(openBtn);
-    const dl = document.createElement('button'); dl.textContent='DL';
-    dl.onclick = ()=> downloadFile(f.id);
-    controls.appendChild(dl);
-    const del = document.createElement('button'); del.textContent='X';
-    del.onclick = ()=> { if(confirm('Supprimer ' + f.name + ' ?')) { deleteFile(f.id); } }
-    controls.appendChild(del);
-    el.appendChild(controls);
-    filesList.appendChild(el);
-  });
+function unlock() {
+    let p = document.getElementById("pass").value;
+    if (p === PASSWORD) {
+        document.getElementById("lockscreen").style.display = "none";
+        document.getElementById("cloud").style.display = "flex";
+        refreshList();
+    }
 }
 
-function generateId(){ return 'f_'+Math.random().toString(36).slice(2,9); }
+function uploadFiles() {
+    let files = document.getElementById("fileInput").files;
 
-function handleFilesList(fileList){
-  const arr = Array.from(fileList);
-  arr.forEach(file=>{
-    const reader = new FileReader();
-    reader.onload = e=>{
-      files.unshift({
-        id: generateId(),
-        name: file.name,
-        type: file.type,
-        data: e.target.result,
-        created: Date.now()
-      });
-      saveFiles();
-    };
-    reader.readAsDataURL(file);
-  });
+    [...files].forEach(file => {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            savedFiles[file.name] = e.target.result;
+            localStorage.setItem("cloudFiles", JSON.stringify(savedFiles));
+            refreshList();
+        };
+        reader.readAsDataURL(file);
+    });
 }
 
-dropzone.addEventListener('click', ()=> fileInput.click());
-importBtn.addEventListener('click', ()=> fileInput.click());
-fileInput.addEventListener('change', e=> {
-  if(e.target.files.length) handleFilesList(e.target.files);
-  e.target.value='';
-});
-
-dropzone.addEventListener('dragover', e=> { e.preventDefault(); dropzone.style.borderColor='rgba(124,231,255,0.5)'; });
-dropzone.addEventListener('dragleave', e=> { dropzone.style.borderColor='rgba(124,231,255,0.15)'; });
-dropzone.addEventListener('drop', e=> {
-  e.preventDefault(); dropzone.style.borderColor='rgba(124,231,255,0.15)';
-  if(e.dataTransfer.files.length) handleFilesList(e.dataTransfer.files);
-});
-
-function selectFile(id){
-  const f = files.find(x=>x.id===id);
-  if(!f) return;
-  selectedId = id;
-  viewerTitle.textContent = f.name;
-  previewArea.innerHTML = '';
-  btnDownload.style.display='inline-block';
-  btnDelete.style.display='inline-block';
-  btnSave.style.display='none';
-  if(f.type && f.type.startsWith('image/')){
-    const img = document.createElement('img'); img.src = f.data; img.style.maxWidth='100%'; img.style.maxHeight='520px'; img.style.borderRadius='8px';
-    previewArea.appendChild(img);
-  } else if(f.type && f.type.startsWith('text') || f.name.match(/\.txt|\.md|\.csv|\.json$/i)){
-    const ta = document.createElement('textarea'); ta.value = atob(f.data.split(',')[1] ? f.data.split(',')[1] : '');
-    ta.style.whiteSpace='pre-wrap';
-    previewArea.appendChild(ta);
-    btnSave.style.display='inline-block';
-    btnSave.onclick = ()=> {
-      const newText = ta.value;
-      const b64 = btoa(newText);
-      // store as data:text/plain;base64,...
-      const idx = files.findIndex(x=>x.id===id);
-      if(idx>=0){
-        files[idx].data = 'data:text/plain;base64,'+b64;
-        files[idx].name = files[idx].name.replace(/\.(txt|md|json|csv)$/i, '') + (files[idx].name.match(/\.(txt|md|json|csv)$/i) ? files[idx].name.match(/\.(txt|md|json|csv)$/i)[0] : '.txt');
-        saveFiles();
-        alert('Enregistré');
-      }
-    };
-  } else {
-    const box = document.createElement('div'); box.className='empty'; box.textContent='Aucun aperçu possible pour ce type de fichier. Utilise "DL" pour le télécharger.';
-    previewArea.appendChild(box);
-  }
+function downloadFile(name, data) {
+    let a = document.createElement("a");
+    a.href = data;
+    a.download = name;
+    a.click();
 }
 
-function downloadFile(id){
-  const f = files.find(x=>x.id===id);
-  if(!f) return;
-  const a = document.createElement('a');
-  a.href = f.data;
-  a.download = f.name;
-  document.body.appendChild(a); a.click(); a.remove();
+// Affiche la liste
+function refreshList() {
+    let list = document.getElementById("fileList");
+    list.innerHTML = "";
+
+    for (let name in savedFiles) {
+        let div = document.createElement("div");
+        div.className = "fileItem";
+        div.innerHTML = `
+            ${name}  
+            <button onclick="downloadFile('${name}', savedFiles['${name}'])">Télécharger</button>
+        `;
+        list.appendChild(div);
+    }
 }
-
-function deleteFile(id){
-  files = files.filter(x=>x.id!==id);
-  saveFiles();
-  selectedId = null;
-  clearViewer();
-}
-
-function clearViewer(){
-  selectedId = null;
-  viewerTitle.textContent = 'Sélectionne un fichier';
-  previewArea.innerHTML = '';
-  previewArea.appendChild(previewEmpty);
-  btnDownload.style.display='none';
-  btnDelete.style.display='none';
-  btnSave.style.display='none';
-}
-
-// new text file
-newText.addEventListener('click', ()=>{
-  const id = generateId();
-  const name = 'nouveau.txt';
-  const data = 'data:text/plain;base64,' + btoa('');
-  files.unshift({id,name,type:'text/plain',data,created:Date.now()});
-  saveFiles();
-  renderFiles();
-  selectFile(files[0].id);
-});
-
-// download/delete buttons in header
-btnClear.addEventListener('click', ()=>{
-  if(confirm('Supprimer tous les fichiers sauvegardés localement ?')){
-    files = []; saveFiles();
-  }
-});
-
-btnLock.addEventListener('click', ()=>{
-  lockOverlay.style.display='flex';
-  localStorage.removeItem(UNLOCK_KEY);
-  setLockedState(true);
-});
-
-// unlock flow
-btnUnlock.addEventListener('click', tryUnlock);
-codeInput.addEventListener('keydown', e=> { if(e.key === 'Enter') tryUnlock(); });
-
-function tryUnlock(){
-  const val = (codeInput.value||'').trim();
-  if(val === PASSCODE){
-    localStorage.setItem(UNLOCK_KEY,'1');
-    setLockedState(false);
-  } else {
-    alert('Code incorrect');
-    codeInput.value='';
-  }
-}
-
-function setLockedState(locked){
-  if(locked){
-    lockOverlay.style.display='flex';
-    bgOverlay.style.backgroundImage = '';
-    bgMessage.textContent = 'Accès verrouillé';
-    document.title = 'Mon Cloud — Verrouillé';
-  } else {
-    lockOverlay.style.display='none';
-    // background maman je t'aime
-    bgOverlay.style.backgroundImage = 'url("data:image/svg+xml;utf8,' + encodeURIComponent(renderBgSVG()) + '")';
-    bgOverlay.style.opacity = '1';
-    bgMessage.textContent = 'maman je t\\'aime';
-    document.title = 'Mon Cloud';
-  }
-}
-
-function renderBgSVG(){
-  // simple SVG background with text
-  const svg = `
-  <svg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'>
-    <defs>
-      <linearGradient id='g' x1='0' x2='1' y1='0' y2='1'>
-        <stop offset='0' stop-color='#ff9a9e' />
-        <stop offset='1' stop-color='#fad0c4' />
-      </linearGradient>
-      <filter id='grain'><feTurbulence baseFrequency='0.8' numOctaves='1' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter>
-    </defs>
-    <rect width='100%' height='100%' fill='url(#g)' />
-    <g transform='translate(120,200)'>
-      <text x='0' y='0' font-family='Georgia,serif' font-size='84' fill='rgba(255,255,255,0.95)'>maman je t'aime</text>
-    </g>
-    <g opacity='0.06'>
-      <circle cx='1400' cy='120' r='260' fill='white'/>
-    </g>
-  </svg>`;
-  return svg;
-}
-
-// init
-(function init(){
-  loadFiles();
-  renderFiles();
-  const unlocked = localStorage.getItem(UNLOCK_KEY);
-  setLockedState(!unlocked);
-})();
-
 </script>
+
 </body>
 </html>
