@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 13</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2a1f3a 100%);
+            height: 100vh;
+        }
+
+        .boot-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeOut 1s 3s forwards;
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; pointer-events: none; }
+        }
+
+        .boot-logo {
+            font-size: 80px;
+            margin-bottom: 30px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .boot-text {
+            color: #00d4ff;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .boot-loader {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .boot-loader-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #0066ff);
+            animation: loading 3s ease-in-out forwards;
+        }
+
+        @keyframes loading {
+            to { width: 100%; }
+        }
+
+        .desktop {
+            position: relative;
+            height: 100vh;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%230a0e27"/><stop offset="50%" style="stop-color:%231a1f3a"/><stop offset="100%" style="stop-color:%232a1f3a"/></linearGradient></defs><rect fill="url(%23g)" width="1920" height="1080"/></svg>');
+            background-size: cover;
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(100, 200, 255, 0.6);
+            border-radius: 50%;
+            animation: float 20s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+        }
+
+        .taskbar {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 60px;
+            background: rgba(15, 20, 40, 0.85);
+            backdrop-filter: blur(30px);
+            border-top: 1px solid rgba(100, 200, 255, 0.2);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 1000;
+            box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .start-btn {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #00d4ff, #0066ff);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(0, 100, 255, 0.4);
+        }
+
+        .start-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(0, 150, 255, 0.6);
+        }
+
+        .start-icon {
+            width: 24px;
+            height: 24px;
+            background: white;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+
+        .taskbar-apps {
+            display: flex;
+            gap: 10px;
+            margin-left: 20px;
+            flex: 1;
+        }
+
+        .taskbar-app {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .taskbar-app:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .system-tray {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+            font-size: 13px;
+        }
+
+        .tray-icon {
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 5px;
+        }
+
+        .tray-icon:hover {
+            color: #00d4ff;
+        }
+
+        .start-menu {
+            position: absolute;
+            bottom: 70px;
+            left: 20px;
+            width: 600px;
+            height: 700px;
+            background: rgba(20, 25, 45, 0.95);
+            backdrop-filter: blur(40px);
+            border-radius: 20px;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+        }
+
+        .start-menu.active {
+            display: flex;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .start-header {
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(0, 100, 255, 0.2), rgba(0, 212, 255, 0.2));
+            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+        }
+
+        .start-header h2 {
+            color: white;
+            font-size: 28px;
+            font-weight: 300;
+        }
+
+        .search-box {
+            margin: 20px;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            width: calc(100% - 40px);
+        }
+
+        .apps-grid {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .app-tile {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .app-tile:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
+            border-color: rgba(0, 212, 255, 0.5);
+        }
+
+        .app-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .app-name {
+            color: white;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .window {
+            position: absolute;
+            background: rgba(25, 30, 50, 0.95);
+            backdrop-filter: blur(30px);
+            border-radius: 15px;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+
+        .window.active {
+            display: flex;
+            flex-direction: column;
+            animation: windowOpen 0.3s ease;
+        }
+
+        @keyframes windowOpen {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .window-header {
+            background: linear-gradient(135deg, rgba(0, 100, 255, 0.3), rgba(0, 212, 255, 0.3));
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+        }
+
+        .window-title {
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .window-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .window-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .window-btn.close:hover {
+            background: #ff4444;
+        }
+
+        .window-content {
+            flex: 1;
+            padding: 0;
+            color: white;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .desktop-icons {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 100px);
+            gap: 20px;
+        }
+
+        .desktop-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .desktop-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .desktop-icon-img {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        .desktop-icon-name {
+            color: white;
+            font-size: 12px;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .time {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .explorer-toolbar {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .explorer-btn {
+            padding: 8px 15px;
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+
+        .explorer-btn:hover {
+            background: rgba(0, 212, 255, 0.4);
+        }
+
+        .explorer-path {
+            flex: 1;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 13px;
+        }
+
+        .explorer-sidebar {
+            width: 200px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+        }
+
+        .explorer-main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .explorer-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            align-content: start;
+        }
+
+        .folder-item, .file-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .folder-item:hover, .file-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .folder-icon, .file-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .folder-name, .file-name {
+            font-size: 12px;
+            text-align: center;
+            word-break: break-word;
+        }
+
+        .sidebar-item {
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .browser-toolbar {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .browser-nav-btn {
+            width: 35px;
+            height: 35px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .browser-nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .browser-url {
+            flex: 1;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .browser-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .website {
+            display: none;
+        }
+
+        .website.active {
+            display: block;
+        }
+
+        .website h1 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+        }
+
+        .website h2 {
+            color: #00d4ff;
+            margin: 25px 0 15px 0;
+            font-size: 20px;
+        }
+
+        .website p {
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .website-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .media-player {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        audio, video {
+            width: 100%;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+
+        .image-viewer {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="boot-screen">
+        <div class="boot-logo">⬡</div>
+        <div class="boot-text">Windows 13</div>
+        <div class="boot-loader">
+            <div class="boot-loader-bar"></div>
+        </div>
+    </div>
+
+    <audio id="startupSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w==" type="audio/wav">
+    </audio>
+
+    <audio id="clickSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=" type="audio/wav">
+    </audio>
+
+    <div class="desktop">
+        <div class="particles" id="particles"></div>
+        
+        <div class="desktop-icons">
+            <div class="desktop-icon" onclick="openWindow('explorer')">
+                <div class="desktop-icon-img">📁</div>
+                <div class="desktop-icon-name">Explorateur</div>
+            </div>
+            <div class="desktop-icon" onclick="openWindow('browser')">
+                <div class="desktop-icon-img">🌐</div>
+                <div class="desktop-icon-name">HoloWeb</div>
+            </div>
+        </div>
+
+        <div class="start-menu" id="startMenu">
+            <div class="start-header">
+                <h2>Windows 13</h2>
+            </div>
+            <input type="text" class="search-box" placeholder="🔍 Recherche neurale...">
+            <div class="apps-grid">
+                <div class="app-tile" onclick="openWindow('explorer')">
+                    <div class="app-icon">📁</div>
+                    <div class="app-name">Explorateur</div>
+                </div>
+                <div class="app-tile" onclick="openWindow('browser')">
+                    <div class="app-icon">🌐</div>
+                    <div class="app-name">HoloWeb</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Explorateur de fichiers -->
+        <div class="window" id="explorer" style="top: 50px; left: 100px; width: 900px; height: 650px;">
+            <div class="window-header">
+                <span class="window-title">📁 Explorateur Quantique</span>
+                <div class="window-controls">
+                    <div class="window-btn" onclick="minimizeWindow('explorer')">─</div>
+                    <div class="window-btn" onclick="maximizeWindow('explorer')">□</div>
+                    <div class="window-btn close" onclick="closeWindow('explorer')">×</div>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="explorer-toolbar">
+                    <div class="explorer-btn" onclick="goBack()">◄ Retour</div>
+                    <div class="explorer-btn" onclick="navigateToFolder('root')">🏠 Accueil</div>
+                    <div class="explorer-path" id="currentPath">Ce PC</div>
+                    <input type="file" id="fileInput" accept="image/*,audio/*,video/*" multiple onchange="uploadFiles(event)">
+                    <div class="explorer-btn" onclick="document.getElementById('fileInput').click()">➕ Ajouter fichiers</div>
+                </div>
+                <div class="explorer-main">
+                    <div class="explorer-sidebar">
+                        <div class="sidebar-item" onclick="navigateToFolder('root')">🖥️ Ce PC</div>
+                        <div class="sidebar-item" onclick="navigateToFolder('documents')">📄 Documents</div>
+                        <div class="sidebar-item" onclick="navigateToFolder('images')">🖼️ Images</div>
+                        <div class="sidebar-item" onclick="navigateToFolder('music')">🎵 Musique</div>
+                        <div class="sidebar-item" onclick="navigateToFolder('videos')">🎬 Vidéos</div>
+                    </div>
+                    <div class="explorer-content" id="explorerContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigateur -->
+        <div class="window" id="browser" style="top: 80px; left: 250px; width: 1000px; height: 700px;">
+            <div class="window-header">
+                <span class="window-title">🌐 HoloWeb Browser</span>
+                <div class="window-controls">
+                    <div class="window-btn" onclick="minimizeWindow('browser')">─</div>
+                    <div class="window-btn" onclick="maximizeWindow('browser')">□</div>
+                    <div class="window-btn close" onclick="closeWindow('browser')">×</div>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="browser-toolbar">
+                    <div class="browser-nav-btn" onclick="browserBack()">◄</div>
+                    <div class="browser-nav-btn" onclick="browserForward()">►</div>
+                    <div class="browser-nav-btn" onclick="browserRefresh()">↻</div>
+                    <input type="text" class="browser-url" id="browserUrl" value="holoweb://accueil" readonly>
+                </div>
+                <div class="browser-content" id="browserContent">
+                    <div class="website active" id="site-accueil">
+                        <h1>🌐 Bienvenue sur HoloWeb</h1>
+                        <p>Le navigateur du futur - Navigation quantique instantanée</p>
+                        
+                        <div class="website-card" onclick="loadWebsite('actualites')">
+                            <h2>📰 HoloNews</h2>
+                            <p>Les dernières actualités en temps réel</p>
+                        </div>
+                        
+                        <div class="website-card" onclick="loadWebsite('streaming')">
+                            <h2>🎬 QuantumStream</h2>
+                            <p>Streaming vidéo et musique illimité</p>
+                        </div>
+                        
+                        <div class="website-card" onclick="loadWebsite('social')">
+                            <h2>💬 HoloSocial</h2>
+                            <p>Réseau social holographique</p>
+                        </div>
+                        
+                        <div class="website-card" onclick="loadWebsite('shopping')">
+                            <h2>🛍️ NeuralShop</h2>
+                            <p>Shopping avec IA personnalisée</p>
+                        </div>
+                    </div>
+
+                    <div class="website" id="site-actualites">
+                        <h1>📰 HoloNews</h1>
+                        <div class="website-card">
+                            <h2>🚀 Windows 13 bat tous les records</h2>
+                            <p>Le nouveau système d'exploitation de Microsoft révolutionne l'informatique avec son interface holographique et son IA intégrée.</p>
+                            <p><small>Il y a 2 heures</small></p>
+                        </div>
+                        <div class="website-card">
+                            <h2>🤖 L'IA atteint un nouveau niveau</h2>
+                            <p>Les assistants neuraux deviennent capables de comprendre les émotions humaines avec une précision de 99.9%.</p>
+                            <p><small>Il y a 5 heures</small></p>
+                        </div>
+                        <div class="website-card">
+                            <h2>🌍 Internet quantique déployé mondialement</h2>
+                            <p>La vitesse de navigation atteint des niveaux jamais vus grâce à la technologie quantique.</p>
+                            <p><small>Il y a 1 jour</small></p>
+                        </div>
+                        <div class="explorer-btn" onclick="loadWebsite('accueil')" style="margin-top: 20px;">◄ Retour à l'accueil</div>
+                    </div>
+
+                    <div class="website" id="site-streaming">
+                        <h1>🎬 QuantumStream</h1>
+                        <p>Profitez de millions de contenus en streaming holographique 8K</p>
+                        
+                        <h2>🔥 Tendances</h2>
+                        <div class="website-card">
+                            <h2>🎵 Top Musique</h2>
+                            <p>• Neural Beats - "Future Sound"</p>
+                            <p>• Quantum Harmony - "Digital Dreams"</p>
+                            <p>• HoloWave - "Cyber Nights"</p>
+                        </div>
+                        
+                        <div class="website-card">
+                            <h2>🎬 Films populaires</h2>
+                            <p>• "L'Ascension de l'IA" - Sci-fi 2026</p>
+                            <p>• "Quantum Quest" - Action</p>
+                            <p>• "Neural Love" - Romance futuriste</p>
+                        </div>
+                        <div class="explorer-btn" onclick="loadWebsite('accueil')" style="margin-top: 20px;">◄ Retour à l'accueil</div>
+                    </div>
+
+                    <div class="website" id="site-social">
+                        <h1>💬 HoloSocial</h1>
+                        <p>Connectez-vous en hologramme avec le monde entier</p>
+                        
+                        <div class="website-card">
+                            <h2>👤 Votre profil</h2>
+                            <p>✨ Statut: En ligne - Mode Holographique</p>
+                            <p>👥 5,847 amis connectés</p>
+                            <p>💬 23 nouveaux messages</p>
+                        </div>
+                        <div class="website-card">
+                            <h2>📱 Fil d'actualité</h2>
+                            <p><strong>@TechFuture:</strong> Windows 13 est incroyable! 🚀</p>
+                            <p><strong>@AIEnthusiast:</strong> L'assistant Neural a changé ma vie</p>
+                            <p><strong>@HoloGamer:</strong> Qui veut jouer en mode holographique?</p>
+                        </div>
+                        <div class="explorer-btn" onclick="loadWebsite('accueil')" style="margin-top: 20px;">◄ Retour à l'accueil</div>
+                    </div>
+
+                    <div class="website" id="site-shopping">
+                        <h1>🛍️ NeuralShop</h1>
+                        <p>Shopping personnalisé par IA - Livraison par drone en 10 minutes</p>
+                        
+                        <div class="website-card">
+                            <h2>💎 Recommandations pour vous</h2>
+                            <p>🎧 Casque Neural Audio Pro - 299€</p>
+                            <p>⌚ Montre Quantum Watch X - 599€</p>
+                            <p>💻 Ordinateur HoloPC Elite - 2499€</p>
+                        </div>
+                        
+                        <div class="website-card">
+                            <h2>🔥 Meilleures ventes</h2>
+                            <p>📱 Smartphone Holographique Z13</p>
+                            <p>🎮 Console GameVerse Pro</p>
+                            <p>🤖 Assistant Robot Personnel v3</p>
+                        </div>
+                        <div class="explorer-btn" onclick="loadWebsite('accueil')" style="margin-top: 20px;">◄ Retour à l'accueil</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visionneuse de fichiers -->
+        <div class="window" id="fileViewer" style="top: 100px; left: 300px; width: 700px; height: 550px;">
+            <div class="window-header">
+                <span class="window-title" id="viewerTitle">📄 Fichier</span>
+                <div class="window-controls">
+                    <div class="window-btn" onclick="minimizeWindow('fileViewer')">─</div>
+                    <div class="window-btn" onclick="maximizeWindow('fileViewer')">□</div>
+                    <div class="window-btn close" onclick="closeWindow('fileViewer')">×</div>
+                </div>
+            </div>
+            <div class="window-content" style="padding: 20px;" id="fileViewerContent"></div>
+        </div>
+
+        <div class="taskbar">
+            <div class="start-btn" onclick="toggleStart()">
+                <div class="start-icon"></div>
+            </div>
+            <div class="taskbar-apps">
+                <div class="taskbar-app" onclick="openWindow('explorer')" title="Explorateur">📁</div>
+                <div class="taskbar-app" onclick="openWindow('browser')" title="HoloWeb">🌐</div>
+            </div>
+            <div class="system-tray">
+                <div class="tray-icon" title="Volume" onclick="playSound('click')">🔊</div>
+                <div class="time" id="time"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sons
+        function playSound(type) {
+            const sound = document.getElementById(type + 'Sound');
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play().catch(e => console.log('Audio play failed:', e));
+            }
+        }
+
+        // Jouer le son de démarrage
+        setTimeout(() => {
+            playSound('startup');
+        }, 500);
+
+        // Système de fichiers
+        const fileSystem = {
+            root: [
+                { type: 'folder', name: 'Documents', path: 'documents' },
+                { type: 'folder', name: 'Images', path: 'images' },
+                { type: 'folder', name: 'Musique', path: 'music' },
+                { type: 'folder', name: 'Vidéos', path: 'videos' }
+            ],
+            documents: [],
+            images: [],
+            music: [],
+            videos: []
+        };
+
+        let currentFolder = 'root';
+        let navigationHistory = ['root'];
+        let historyIndex = 0;
+
+        function navigateToFolder(folder) {
+            playSound('click');
+            currentFolder = folder;
+            historyIndex++;
+            navigationHistory = navigationHistory.slice(0, historyIndex);
+            navigationHistory.push(folder);
+            renderExplorer();
+        }
+
+        function goBack() {
+            if (historyIndex > 0) {
+                playSound('click');
+                historyIndex--;
+                currentFolder = navigationHistory[historyIndex];
+                renderExplorer();
+            }
+        }
+
+        function renderExplorer() {
+            const content = document.getElementById('explorerContent');
+            const pathDisplay = document.getElementById('currentPath');
+            
+            const pathNames = {
+                root: 'Ce PC',
+                documents: 'Documents',
+                images: 'Images',
+                music: 'Musique',
+                videos: 'Vidéos'
+            };
+            
+            pathDisplay.textContent = pathNames[currentFolder] || 'Ce PC';
+            
+            content.innerHTML = '';
+            const items = fileSystem[currentFolder] || [];
+            
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = item.type === 'folder' ? 'folder-item' : 'file-item';
+                
+                let icon = '📄';
+                if (item.type === 'folder') icon = '📁';
+                else if (item.type === 'image') icon = '🖼️';
+                else if (item.type === 'audio') icon = '🎵';
+                else if (item.type === 'video') icon = '🎬';
+                
+                div.innerHTML = `
+                    <div class="folder-icon">${icon}</div>
+                    <div class="folder-name">${item.name}</div>
+                `;
+                
+                div.onclick = () => {
+                    playSound('click');
+                    if (item.type === 'folder') {
+                        navigateToFolder(item.path);
+                    } else {
+                        openFile(item);
+                    }
+                };
+                
+                content.appendChild(div);
+            });
+        }
+
+        function uploadFiles(event) {
+            const files = event.target.files;
+            
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                const fileType = file.type.split('/')[0];
+                
+                reader.onload = (e) => {
+                    const fileObj = {
+                        name: file.name,
+                        type: fileType,
+                        data: e.target.result,
+                        mimeType: file.type
+                    };
+                    
+                    if (fileType === 'image') {
+                        fileSystem.images.push(fileObj);
+                    } else if (fileType === 'audio') {
+                        fileSystem.music.push(fileObj);
+                    } else if (fileType === 'video') {
+                        fileSystem.videos.push(fileObj);
+                    } else {
+                        fileSystem.documents.push(fileObj);
+                    }
+                    
+                    renderExplorer();
+                };
+                
+                reader.readAsDataURL(file);
+            });
+            
+            event.target.value = '';
+        }
+
+        function openFile(file) {
+            const viewer = document.getElementById('fileViewer');
+            const title = document.getElementById('viewerTitle');
+            const content = document.getElementById('fileViewerContent');
+            
+            title.textContent = file.name;
+            content.innerHTML = '';
+            
+            if (file.type === 'image') {
+                content.innerHTML = `<img src="${file.data}" class="image-viewer" alt="${file.name}">`;
+            } else if (file.type === 'audio') {
+                content.innerHTML = `
+                    <div class="media-player">
+                        <h3>🎵 ${file.name}</h3>
+                        <audio controls autoplay>
+                            <source src="${file.data}" type="${file.mimeType}">
+                        </audio>
+                    </div>
+                `;
+            } else if (file.type === 'video') {
+                content.innerHTML = `
+                    <div class="media-player">
+                        <h3>🎬 ${file.name}</h3>
+                        <video controls autoplay>
+                            <source src="${file.data}" type="${file.mimeType}">
+                        </video>
+                    </div>
+                `;
+            }
+            
+            openWindow('fileViewer');
+        }
+
+        // Navigateur
+        let currentSite = 'accueil';
+        let browserHistory = ['accueil'];
+        let browserHistoryIndex = 0;
+
+        function loadWebsite(site) {
+            playSound('click');
+            document.querySelectorAll('.website').forEach(w => w.classList.remove('active'));
+            document.getElementById('site-' + site).classList.add('active');
+            document.getElementById('browserUrl').value = 'holoweb://' + site;
+            
+            currentSite = site;
+            browserHistoryIndex++;
+            browserHistory = browserHistory.slice(0, browserHistoryIndex);
+            browserHistory.push(site);
+        }
+
+        function browserBack() {
+            if (browserHistoryIndex > 0) {
+                playSound('click');
+                browserHistoryIndex--;
+                currentSite = browserHistory[browserHistoryIndex];
+                document.querySelectorAll('.website').forEach(w => w.classList.remove('active'));
+                document.getElementById('site-' + currentSite).classList.add('active');
+                document.getElementById('browserUrl').value = 'holoweb://' + currentSite;
+            }
+        }
+
+        function browserForward() {
+            if (browserHistoryIndex < browserHistory.length - 1) {
+                playSound('click');
+                browserHistoryIndex++;
+                currentSite = browserHistory[browserHistoryIndex];
+                document.querySelectorAll('.website').forEach(w => w.classList.remove('active'));
+                document.getElementById('site-' + currentSite).classList.add('active');
+                document.getElementById('browserUrl').value = 'holoweb://' + currentSite;
+            }
+        }
+
+        function browserRefresh() {
+            playSound('click');
+        }
+
+        // Particules
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        // Horloge
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('time').textContent = `${hours}:${minutes}`;
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Menu démarrer
+        function toggleStart() {
+            playSound('click');
+            const menu = document.getElementById('startMenu');
+            menu.classList.toggle('active');
+        }
+
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('startMenu');
+            const startBtn = document.querySelector('.start-btn');
+            if (!menu.contains(e.target) && !startBtn.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // Fenêtres
+        function openWindow(id) {
+            playSound('click');
+            const win = document.getElementById(id);
+            win.classList.add('active');
+            document.getElementById('startMenu').classList.remove('active');
+            bringToFront(win);
+            
+            if (id === 'explorer') {
+                renderExplorer();
+            }
+        }
+
+        function closeWindow(id) {
+            playSound('click');
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function minimizeWindow(id) {
+            playSound('click');
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function maximizeWindow(id) {
+            playSound('click');
+            const win = document.getElementById(id);
+            if (win.style.width === '100%') {
+                win.style.width = '900px';
+                win.style.height = '650px';
+                win.style.top = '50px';
+                win.style.left = '100px';
+            } else {
+                win.style.width = '100%';
+                win.style.height = 'calc(100% - 60px)';
+                win.style.top = '0';
+                win.style.left = '0';
+            }
+        }
+
+        let highestZ = 100;
+        function bringToFront(win) {
+            win.style.zIndex = ++highestZ;
+        }
+
+        // Glisser les fenêtres
+        document.querySelectorAll('.window').forEach(win => {
+            const header = win.querySelector('.window-header');
+            let isDragging = false;
+            let currentX, currentY, initialX, initialY;
+
+            header.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.window-btn')) return;
+                isDragging = true;
+                bringToFront(win);
+                initialX = e.clientX - win.offsetLeft;
+                initialY = e.clientY - win.offsetTop;
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    e.preventDefault();
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                    win.style.left = currentX + 'px';
+                    win.style.top = currentY + 'px';
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            win.addEventListener('mousedown', () => {
+                bringToFront(win);
+            });
+        });
+
+        // Initialisation
+        renderExplorer();
+    </script>
+</body>
+</html>
